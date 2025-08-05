@@ -1,0 +1,26 @@
+import psutil
+import time
+import os
+suspicious_keywords = ["keylogger", "logger", "hook", "spy", "capture", "keyboard", "interceptor"]
+def detect_keylogger():
+    print("\n Scanning processes for suspicious keylogger behavior...\n")
+    found_something = False    
+    for proc in psutil.process_iter(['pid', 'name']):
+        try:
+            process_name = proc.info['name'].lower()
+            for keyword in suspicious_keywords:
+                if keyword in process_name:
+                    print(f"⚠️ Suspicious process detected: {process_name} (PID: {proc.info['pid']})")
+                    found_something = True
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+
+    if not found_something:
+        print("✅ No suspicious keylogger-related processes found.")
+
+if __name__ == "__main__":
+    print(" Welcome to Keylogger Detector Tool")
+    while True:
+        detect_keylogger()
+        print("\n Next scan in 15 seconds...\n")
+        time.sleep(15)
